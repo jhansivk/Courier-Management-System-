@@ -1,0 +1,85 @@
+Task1:
+CREATE DATABASE Courier_Management;
+USE Courier_Management;
+create table User (UserID INT PRIMARY KEY,  
+Name VARCHAR(255),  
+Email VARCHAR(255) UNIQUE,  
+ Password VARCHAR(255),  
+ContactNumber VARCHAR(20),  
+Address TEXT  );  
+INSERT INTO User (UserID, Name, Email, ContactNumber, Address) VALUES
+(1, 'Rajesh Kumar', 'rajesh.kumar@example.com', '9876543210', '123, MG Road, Bangalore'),
+(2, 'Priya Sharma', 'priya.sharma@example.com', '9765432109', '45, Connaught Place, Delhi'),
+(3, 'Arun Mehta', 'arun.mehta@example.com', '9654321098', '78, Park Street, Kolkata'),
+(4, 'Deepika Reddy', 'deepika.reddy@example.com', '9543210987', '56, Jubilee Hills, Hyderabad'),
+(5, 'Sandeep Joshi', 'sandeep.joshi@example.com', '9432109876', '34, FC Road, Chennai');
+Select*from User;
+create table Courier  
+(CourierID INT PRIMARY KEY,  
+SenderName VARCHAR(255),  
+SenderAddress TEXT,  
+ReceiverName VARCHAR(255),  
+ReceiverAddress TEXT,  
+Weight DECIMAL(5, 2),  
+Status VARCHAR(50),  
+TrackingNumber VARCHAR(20) UNIQUE,  
+DeliveryDate DATE);  
+INSERT INTO Courier (CourierID, SenderName, SenderAddress, ReceiverName, ReceiverAddress, Weight, Status, TrackingNumber, DeliveryDate) VALUES
+(1, 'Vikas Patel', '22, Lalbagh, Lucknow, Uttar Pradesh', 'Manish Desai', '88, Ghatkopar, Mumbai', 3.25, 'In Transit', 'TN9876543210', '2025-03-21'),
+(2, 'Sonia Kapoor', '67, Sector 15, Gurgaon, Haryana', 'Arjun Nair', '56, Marine Drive, Kochi', 2.10, 'Delivered', 'TN8765432109', '2025-03-16'),
+(3, 'Ramesh Iyer', '12, Jayanagar, Bangalore, Karnataka', 'Sunita Chauhan', '99, gani, Lucknow ', 4.50, 'Shipped', 'TN7654321098', '2025-03-23'),
+(4, 'Anjali Verma', '34, Park Street, Kolkata, West Bengal', 'Vikram Malhotra', '78, mangala, Bangalor', 1.90, 'Out for Delivery', 'TN6543210987', '2025-03-19'),
+(5, 'Amit Sharma', '56, Connaught Place, Delhi', 'Neha Joshi', '45, MG Road, Pune', 2.75, 'Pending', 'TN5432109876', '2025-03-24');
+Select*from Courier;
+create Table CourierServices  
+(ServiceID INT PRIMARY KEY,  
+ServiceName VARCHAR(100),  
+Cost DECIMAL(8, 2));  
+INSERT INTO CourierServices (ServiceID, ServiceName, Cost) VALUES
+(1, 'Standard Delivery', 150.00),
+(2, 'Express Delivery', 300.00),
+(3, 'Same-Day Delivery', 500.00),
+(4, 'International Shipping', 1200.00),
+(5, 'Fragile Item Handling', 350.00);
+Select*from CourierServices;
+create table Employee (EmployeeID INT PRIMARY KEY,  
+Name VARCHAR(255),  
+Email VARCHAR(255) UNIQUE,  
+ContactNumber VARCHAR(20),  
+Role VARCHAR(50),  
+Salary DECIMAL(10, 2));
+INSERT INTO Employee (EmployeeID, Name, Email, ContactNumber, Role, Salary) VALUES
+(1, 'Arun Kumar', 'arun.kumar@example.com', '9876543210', 'Delivery Executive', 30000.00),
+(2, 'Keerthana Reddy', 'keerthana.reddy@example.com', '8765432109', 'Customer Support', 28000.00),
+(3, 'Manoj Nair', 'manoj.nair@example.com', '7654321098', 'Warehouse Manager', 45000.00),
+(4, 'Divya Rajan', 'divya.rajan@example.com', '6543210987', 'Courier Dispatcher', 35000.00),
+(5, 'Santosh Venkatesh', 'santosh.venkatesh@example.com', '5432109876', 'Operations Manager', 60000.00);
+select *from Employee;
+CREATE TABLE Location (
+    LocationID INT PRIMARY KEY,  
+    LocationName VARCHAR(100),  
+    Address TEXT  
+);
+INSERT INTO Location (LocationID, LocationName, Address) VALUES
+(1, 'Bangalore Hub', '12, MG Road, Bangalore'),
+(2, 'Chennai Branch', '45, Anna Nagar, Chennai'),
+(3, 'Hyderabad Office', '67, Jubilee Hills, Hyderabad'),
+(4, 'Mumbai Warehouse', '89, Andheri West, Mumbai'),
+(5, 'Delhi Center', '56, Connaught Place, New Delhi');
+select*from Location;
+CREATE TABLE Payment (
+    PaymentID INT PRIMARY KEY,  
+    CourierID INT,  
+    LocationID INT,  
+    Amount DECIMAL(10, 2),  
+    PaymentDate DATE,  
+    FOREIGN KEY (CourierID) REFERENCES Courier(CourierID),
+    FOREIGN KEY (LocationID) REFERENCES Location(LocationID)
+);
+INSERT INTO Payment (PaymentID, CourierID, LocationID, Amount, PaymentDate) VALUES
+(1, 1, 2, 150.00, '2025-03-18'),
+(2, 2, 4, 300.00, '2025-03-16'),
+(3, 3, 1, 500.00, '2025-03-19'),
+(4, 4, 5, 350.00, '2025-03-17'),
+(5, 5, 3, 200.00, '2025-03-20');
+Select*from payment;
