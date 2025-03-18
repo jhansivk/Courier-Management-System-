@@ -125,21 +125,4 @@ INSERT INTO ScheduledDeliveries (ScheduledDeliveryID, CourierID, PackageID, Sche
 (4, 4, 4, '2025-03-19'), 
 (5, 5, 5, '2025-03-24'); 
 select*from ScheduledDeliveries ;
-CREATE TABLE Payments (
-    PaymentID INT PRIMARY KEY,
-    CourierID INT,
-    LocationID INT,
-    Amount DECIMAL(10, 2),
-    PaymentDate DATE,
-    FOREIGN KEY (CourierID) REFERENCES Courier(CourierID),
-    FOREIGN KEY (LocationID) REFERENCES Location(LocationID)
-);
-alter table Payment modify column PaymentID varchar(10);
-INSERT INTO Payment (PaymentID, CourierID, LocationID, Amount, PaymentDate) 
-VALUES
-('P1', 1, 2, 150.00, '2025-03-18'),
-('P2', 2, 4, 300.00, '2025-03-16'),
-('P3', 3, 1, 500.00, '2025-03-19'),
-('P4', 4, 5, 350.00, '2025-03-17'),
-('P5', 5, 3, 200.00, '2025-03-20');
-select*from Payment;
+
