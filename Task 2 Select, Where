@@ -1,0 +1,16 @@
+select*from user;
+select*from courier where sendername = 'Anjali Verma';
+select*from courier;
+select*from courier where courierid = 2;
+select*from courier where sendername = 'Vikas Patel';
+select*from courier where status != 'Delivered';
+select*from courier where deliverydate = '2025-03-19';
+select*from courier where status = 'Shipped';
+select courierid, count(*) as totalpackage from courier group by courierid;
+select courierid, avg(datediff(deliverydate, curdate())) as averagedeliverytime
+from courier group by courierid;
+select*from courier where weight between 2 and 3;
+select*from employee where name like '%John%';
+select*from courier where courier.courierid in (
+    select payment.courierid from payment where payment.amount > 50
+);
