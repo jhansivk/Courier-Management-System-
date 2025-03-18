@@ -1,0 +1,19 @@
+SELECT EmployeeID, Name, (SELECT COUNT(*) FROM Courier WHERE Courier.CourierID IN (SELECT CourierID FROM Courier WHERE Courier.CourierID = Employee.EmployeeID)) AS TotalCouriersHandled FROM Employee;
+SELECT LocationID, LocationName, (SELECT SUM(Amount) FROM Payment WHERE Payment.LocationID = Location.LocationID) AS TotalRevenue FROM Location;
+SELECT LocationID, LocationName, (SELECT COUNT(*) FROM Courier 
+WHERE Courier.LocationID = Location.LocationID AND Courier.Status = 'Delivered') AS TotalCouriersDelivered
+FROM Location;
+SELECT LocationID, LocationName, (SELECT COUNT(*) FROM Payment 
+WHERE Payment.LocationID = Location.LocationID 
+AND Payment.CourierID IN (SELECT CourierID FROM Courier WHERE Status = 'Delivered')) AS TotalCouriersDelivered FROM Location;
+SELECT CourierID, (SELECT AVG(DATEDIFF(DeliveryDate, CURDATE())) FROM Courier AS C WHERE C.CourierID = Courier.CourierID) AS AverageDeliveryTime FROM Courier 
+ORDER BY AverageDeliveryTime DESC 
+LIMIT 1;
+SELECT LocationID, LocationName FROM Location 
+WHERE (SELECT SUM(Amount) FROM Payment WHERE Payment.LocationID = Location.LocationID) < 500;
+SELECT CourierID, SenderName FROM Courier 
+WHERE (SELECT SUM(Amount) FROM Payment WHERE Payment.CourierID = Courier.CourierID AND Payment.LocationID = 2) > 1000;
+SELECT CourierID, SenderName FROM Courier 
+WHERE (SELECT SUM(Amount) FROM Payment WHERE Payment.CourierID = Courier.CourierID AND Payment.PaymentDate > '2025-03-01') > 1000;
+SELECT LocationID, LocationName FROM Location 
+WHERE (SELECT SUM(Amount) FROM Payment WHERE Payment.LocationID = Location.LocationID AND Payment.PaymentDate < '2025-03-01') > 5000;
