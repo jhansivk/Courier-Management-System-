@@ -83,3 +83,63 @@ INSERT INTO Payment (PaymentID, CourierID, LocationID, Amount, PaymentDate) VALU
 (4, 4, 5, 350.00, '2025-03-17'),
 (5, 5, 3, 200.00, '2025-03-20');
 Select*from payment;
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    UserID INT,
+    OrderDate DATE,
+    FOREIGN KEY (UserID) REFERENCES User(UserID)
+);
+INSERT INTO Orders (OrderID, UserID, OrderDate) VALUES
+(1, 1, '2025-03-15'),  
+(2, 2, '2025-03-16'),  
+(3, 3, '2025-03-17'), 
+(4, 4, '2025-03-18'),  
+(5, 5, '2025-03-19');  
+select*from Orders;
+CREATE TABLE OrderDetails (
+    OrderDetailID INT PRIMARY KEY,
+    OrderID INT,
+    CourierID INT,
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (CourierID) REFERENCES Courier(CourierID)
+);
+INSERT INTO OrderDetails (OrderDetailID, OrderID, CourierID) VALUES
+(1, 1, 1),  
+(2, 2, 2),  
+(3, 3, 3), 
+(4, 4, 4),  
+(5, 5, 5);
+Select *from OrderDetails;
+CREATE TABLE ScheduledDeliveries (
+    ScheduledDeliveryID INT PRIMARY KEY,
+    CourierID INT,
+    PackageID INT,
+    ScheduledDeliveryDate DATE,
+    FOREIGN KEY (CourierID) REFERENCES Courier(CourierID),
+    FOREIGN KEY (PackageID) REFERENCES Courier(CourierID)
+);
+INSERT INTO ScheduledDeliveries (ScheduledDeliveryID, CourierID, PackageID, ScheduledDeliveryDate) VALUES
+(1, 1, 1, '2025-03-21'), 
+(2, 2, 2, '2025-03-16'),  
+(3, 3, 3, '2025-03-23'),  
+(4, 4, 4, '2025-03-19'), 
+(5, 5, 5, '2025-03-24'); 
+select*from ScheduledDeliveries ;
+CREATE TABLE Payments (
+    PaymentID INT PRIMARY KEY,
+    CourierID INT,
+    LocationID INT,
+    Amount DECIMAL(10, 2),
+    PaymentDate DATE,
+    FOREIGN KEY (CourierID) REFERENCES Courier(CourierID),
+    FOREIGN KEY (LocationID) REFERENCES Location(LocationID)
+);
+alter table Payment modify column PaymentID varchar(10);
+INSERT INTO Payment (PaymentID, CourierID, LocationID, Amount, PaymentDate) 
+VALUES
+('P1', 1, 2, 150.00, '2025-03-18'),
+('P2', 2, 4, 300.00, '2025-03-16'),
+('P3', 3, 1, 500.00, '2025-03-19'),
+('P4', 4, 5, 350.00, '2025-03-17'),
+('P5', 5, 3, 200.00, '2025-03-20');
+select*from Payment;
