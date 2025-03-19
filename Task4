@@ -1,0 +1,82 @@
+--  Retrieve Payments with Courier Information--
+SELECT P.PaymentID, P.Amount, P.PaymentDate, C.CourierID, C.SenderName, C.ReceiverName, C.Status  
+FROM Payment P  
+INNER JOIN Courier C ON P.CourierID = C.CourierID; 
+
+ -- Retrieve Payments with Location Information --
+ SELECT P.PaymentID, P.Amount, P.PaymentDate, L.LocationID, L.LocationName, L.Address  
+FROM Payment P  
+INNER JOIN Location L ON P.LocationID = L.LocationID; 
+
+-- Retrieve Payments with Courier and Location Information--
+SELECT P.PaymentID, P.Amount, P.PaymentDate, C.CourierID, C.SenderName,C.ReceiverName, C.Status, L.LocationID, L.LocationName, L.Address  
+FROM Payment P  
+INNER JOIN Courier C ON P.CourierID = C.CourierID  
+INNER JOIN Location L ON P.LocationID = L.LocationID;
+
+-- List all payments with courier details--
+SELECT P.PaymentID, P.Amount, P.PaymentDate, C.CourierID,C.SenderName, C.ReceiverName, C.Status, C.TrackingNumber, C.DeliveryDate
+FROM Payment P  
+INNER JOIN Courier C ON P.CourierID = C.CourierID; 
+
+-- Total payments received for each courier --
+SELECT C.CourierID, C.SenderName, C.ReceiverName, SUM(P.Amount) AS TotalPayments
+FROM Payment P  
+INNER JOIN Courier C ON P.CourierID = C.CourierID
+GROUP BY C.CourierID, C.SenderName, C.ReceiverName;
+
+-- List payments made on a specific date --
+SELECT P.PaymentID, P.Amount, P.PaymentDate, C.CourierID, C.SenderName, C.ReceiverName, C.Status
+FROM Payment P  
+INNER JOIN Courier C ON P.CourierID = C.CourierID
+WHERE P.PaymentDate = '2025-03-16';
+
+-- Get Courier Information for Each Payment--
+SELECT P.PaymentID, P.Amount, P.PaymentDate, C.CourierID, C.SenderName, C.ReceiverName, C.Status, C.TrackingNumber, C.DeliveryDate
+FROM Payment P  
+INNER JOIN Courier C ON P.CourierID = C.CourierID;
+
+-- Get Payment Details with Location--
+SELECT P.PaymentID, P.Amount, P.PaymentDate, L.LocationID, L.LocationName, L.Address
+FROM Payment P  
+INNER JOIN Location L ON P.LocationID = L.LocationID;
+
+-- Calculating Total Payments for Each Courier--
+SELECT C.CourierID, C.SenderName, C.ReceiverName, SUM(P.Amount) AS TotalPayments
+FROM Payment P  
+INNER JOIN Courier C ON P.CourierID = C.CourierID
+GROUP BY C.CourierID, C.SenderName, C.ReceiverName;
+
+--  List Payments Within a Date Range--
+SELECT P.PaymentID, P.Amount, P.PaymentDate,C.CourierID, C.SenderName, C.ReceiverName, C.Status
+FROM Payment P  
+INNER JOIN Courier C ON P.CourierID = C.CourierID
+WHERE P.PaymentDate BETWEEN '2025-03-16' AND '2025-03-20';
+
+--  Retrieve a list of all users and their corresponding courier records, including cases where there are no matches on either side  --
+SELECT U.UserID, U.Name, U.Email, U.ContactNumber, U.Address, C.CourierID, C.SenderName, C.ReceiverName, C.Status
+FROM User U
+LEFT JOIN OrderDetails OD ON U.UserID = OD.OrderID
+LEFT JOIN Courier C ON OD.CourierID = C.CourierID
+UNION
+SELECT U.UserID, U.Name, U.Email, U.ContactNumber, U.Address, C.CourierID, C.SenderName, C.ReceiverName, C.Status
+FROM User U
+RIGHT JOIN OrderDetails OD ON U.UserID = OD.OrderID
+RIGHT JOIN Courier C ON OD.CourierID = C.CourierID;
+--  Retrieve a list of all couriers and their corresponding services, including cases where there are no matches on either side--
+SELECT C.CourierID, C.SenderName, C.ReceiverName, C.Status, CS.ServiceID, CS.ServiceName, CS.Cost
+FROM Courier C
+LEFT JOIN CourierServices CS ON C.CourierID = CS.ServiceID
+UNION
+SELECT C.CourierID, C.SenderName, C.ReceiverName, C.Status, CS.ServiceID, CS.ServiceName, CS.Cost
+FROM Courier C
+RIGHT JOIN CourierServices CS ON C.CourierID = CS.ServiceID;
+
+-- Retrieve a list of all employees and their corresponding payments, including cases where there are no matches on either side --
+SELECT E.EmployeeID, E.Name, E.Email, E.ContactNumber, E.Role, E.Salary, P.PaymentID, P.Amount, P.PaymentDate
+FROM Employee E
+LEFT JOIN Payment P ON E.EmployeeID = P.CourierID
+UNION
+SELECT E.EmployeeID, E.Name, E.Email, E.ContactNumber, E.Role, E.Salary, P.PaymentID, P.Amount, P.PaymentDate
+FROM Employee E
+RIGHT JOIN Payment P ON E.EmployeeID = P.CourierID;
