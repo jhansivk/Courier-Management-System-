@@ -80,3 +80,120 @@ UNION
 SELECT E.EmployeeID, E.Name, E.Email, E.ContactNumber, E.Role, E.Salary, P.PaymentID, P.Amount, P.PaymentDate
 FROM Employee E
 RIGHT JOIN Payment P ON E.EmployeeID = P.CourierID;
+--  List all users and all courier services, showing all possible combinations.  --
+SELECT U.UserID, U.Name, U.Email, U.ContactNumber, U.Address, CS.ServiceID, CS.ServiceName, CS.Cost
+FROM User U
+CROSS JOIN CourierServices CS;
+
+-- List all employees and all locations, showing all possible combinations:  
+SELECT E.EmployeeID, E.Name AS EmployeeName, E.Email, E.ContactNumber, E.Role, E.Salary, L.LocationID, L.LocationName, L.Address
+FROM Employee E
+CROSS JOIN Location L;
+
+-- Retrieve a list of couriers and their corresponding sender information 
+SELECT 
+    C.CourierID, 
+    C.SenderName, 
+    C.SenderAddress, 
+    U.Name AS SenderUserName, 
+    U.Email AS SenderEmail, 
+    U.ContactNumber AS SenderContactNumber
+FROM Courier C
+JOIN User U ON C.SenderName = U.Name;
+
+-- Retrieve a list of couriers and their corresponding receiver information--
+SELECT C.CourierID, C.SenderName, C.SenderAddress, C.ReceiverName, C.ReceiverAddress, C.Weight, C.Status, C.TrackingNumber, C.DeliveryDate
+FROM Courier C;
+
+--  Retrieve a list of couriers along with the courier service details
+SELECT C.CourierID, C.SenderName, C.ReceiverName, C.Status, C.TrackingNumber, C.DeliveryDate, CS.ServiceName, CS.Cost
+FROM Courier C
+JOIN CourierServices CS ON C.CourierID = CS.ServiceID;
+
+--  Retrieve a list of employees and the number of couriers assigned to each employee:
+SELECT E.EmployeeID, E.Name AS EmployeeName, COUNT(C.CourierID) AS CouriersAssigned
+FROM Employee E
+LEFT JOIN Courier C ON (C.Status = 'In Transit' OR C.Status = 'Out for Delivery')  
+GROUP BY E.EmployeeID, E.Name;
+
+-- Retrieve a list of locations and the total payment amount received at each location: 
+SELECT L.LocationID, L.LocationName, SUM(P.Amount) AS TotalPaymentAmount
+FROM Location L
+JOIN Payment P ON L.LocationID = P.LocationID
+GROUP BY L.LocationID, L.LocationName;
+
+-- Retrieve all couriers sent by the same sender (based on SenderName).  
+SELECT SenderName, CourierID,SenderAddress, ReceiverName, ReceiverAddress, Weight, Status, TrackingNumber, DeliveryDate
+FROM Courier
+WHERE SenderName IN (
+    SELECT SenderName 
+    FROM Courier 
+    GROUP BY SenderName 
+    HAVING COUNT(CourierID) > 1
+)
+ORDER BY SenderName;
+
+ -- List all employees who share the same role. 
+ SELECT E.EmployeeID, E.Name AS EmployeeName, E.Role
+FROM Employee E
+WHERE E.Role IN (SELECT Role
+FROM Employee
+    GROUP BY Role
+    HAVING COUNT(EmployeeID) > 1
+)
+ORDER BY E.Role;
+
+--  Retrieve all payments made for couriers sent from the same location.
+SELECT P.PaymentID, P.Amount, P.PaymentDate, C.CourierID, C.SenderName, C.ReceiverName, C.Status, L.LocationID, L.LocationName 
+FROM Payment P 
+JOIN Courier C ON P.CourierID = C.CourierID 
+JOIN Location L ON P.LocationID = L.LocationID 
+WHERE L.LocationID = (SELECT LocationID FROM Location WHERE Address = '123, MG Road, Bangalore'); 
+
+-- List employees and the number of couriers they have delivered: 
+SELECT E.EmployeeID, E.Name AS EmployeeName, COUNT(C.CourierID) AS CouriersDelivered
+FROM Employee E
+LEFT JOIN Courier C ON C.Status = 'Delivered'
+GROUP BY E.EmployeeID, E.Name;
+
+-- Find couriers that were paid an amount greater than the cost of their respective courier services 
+SELECT P.PaymentID, P.Amount, C.CourierID, C.SenderName, C.ReceiverName, CS.ServiceName, CS.Cost
+FROM Payment P
+JOIN Courier C ON P.CourierID = C.CourierID
+JOIN CourierServices CS ON C.CourierID = CS.ServiceID
+WHERE P.Amount > CS.Cost;
+
+-- Find couriers that have a weight greater than the average weight of all couriers 
+SELECT CourierID, SenderName, ReceiverName, Weight
+FROM Courier
+WHERE Weight > (SELECT AVG(Weight) FROM Courier); 
+
+-- Find the names of all employees who have a salary greater than the average salary: 
+SELECT Name
+FROM Employee
+WHERE Salary > (SELECT AVG(Salary) FROM Employee);
+
+-- Find the total cost of all courier services where the cost is less than the maximum cost  
+SELECT SUM(Cost) AS TotalCost
+FROM CourierServices
+WHERE Cost < (SELECT MAX(Cost) FROM CourierServices);
+
+--  Find all couriers that have been paid for  
+SELECT C.CourierID, C.SenderName, C.ReceiverName, C.Status, C.Weight, C.TrackingNumber
+FROM Courier C
+JOIN Payment P ON C.CourierID = P.CourierID;
+
+-- Find the locations where the maximum payment amount was made 
+SELECT L.LocationID, L.LocationName, L.Address, P.Amount
+FROM Payment P
+JOIN Location L ON P.LocationID = L.LocationID
+WHERE P.Amount = (SELECT MAX(Amount) FROM Payment);
+
+-- Find all couriers whose weight is greater than the weight of all couriers sent by a specific sender 
+SELECT C.CourierID, C.SenderName, C.Weight, C.Status
+FROM Courier C
+WHERE C.Weight > (
+    SELECT MAX(C1.Weight)
+    FROM Courier C1
+    WHERE C1.SenderName = 'Vikas Patel'  
+);
