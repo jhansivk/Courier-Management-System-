@@ -1,0 +1,225 @@
+create database CareerHub ;
+use CareerHub;
+
+create table Companies (
+CompanyID int auto_increment primary key,
+CompanyName varchar(250)  unique,
+Location text );
+
+Create table Jobs (
+JobID int auto_increment primary key ,
+CompanyID int ,
+JobTitle varchar (250) not null ,
+JobDescription text,
+JobLocation varchar(255) not null,
+Salary decimal(10,2) not null check  (Salary >= 0),
+JobType varchar(50) not null,
+PostedDate datetime default current_timestamp,
+foreign key (CompanyID) references Companies(CompanyID) 
+);
+
+create table Applicants(
+ApplicantID int auto_increment primary key ,
+First_name varchar(250) not null ,
+Last_name varchar (250) not null, 
+Email Varchar (300) unique not null,
+Phone varchar (40) unique,
+Resume Text not null );
+
+Create table Applications (
+ApplicationID int auto_increment primary key ,
+JobID int,
+ApplicantID int,
+ApplicationDate datetime default current_timestamp,
+Coverletter Text,
+foreign key (JobID) references Jobs(JobID),
+foreign key (ApplicantID) references Applicants(ApplicantID));
+
+insert into companies (companyname, location) values
+('tcs', 'chennai'),
+('infosys', 'bangalore'),
+('wipro', 'hyderabad'),
+('hcl ', 'madurai'),
+('zoho', 'coimbatore'),
+('LT', 'trivandrum'),
+('cognizant', 'kochi'),
+('hexaware', 'chennai'),
+('oracle', 'bangalore'),
+('capgemini', 'hyderabad');
+insert into jobs (companyid, jobtitle, jobdescription, joblocation, salary, jobtype, posteddate) values
+(1, 'software engineer', 'develop backend applications', 'chennai', 90000, 'full-time', '2025-03-01 10:00:00'),
+(2, 'data scientist', ' ai models', 'bangalore', 110000, 'full-time', '2025-03-02 12:00:00'),
+(3, 'cloud engineer', 'deploy and manage cloud ', 'hyderabad', 95000, 'contract', '2025-03-03 09:30:00'),
+(4, 'ai engineer', 'research ai solution', 'madurai', 105000, 'full-time', '2025-03-04 11:45:00'),
+(5, 'web developer', 'build frontend applications', 'coimbatore', 85000, 'part-time', '2025-03-05 08:20:00'),  
+(6, 'devops engineer', 'automate deployments', 'trivandrum', 92000, 'contract', '2025-03-06 14:00:00'),
+(7, 'financial analyst', 'analyze financial data', 'kochi', 88000, 'full-time', '2025-03-07 15:30:00'),
+(8, 'java developer', 'backend development', 'chennai', 99000, 'full-time', '2025-03-08 10:10:00'),
+(9, 'cybersecurity expert', 'security threats', 'bangalore', 98000, 'part-time', '2025-03-09 13:25:00'),  
+(10, 'junior developer', 'entry-level software role', 'hyderabad', 75000, 'contract', '2025-03-10 16:00:00');  
+insert into applicants (first_name, last_name, email, phone, resume) values
+('arun', 'kumar', 'arun.kumar@example.com', '9876543210', 'resume1'),
+('divya', 'menon', 'divya.menon@example.com', '8765432109', 'resume2'),
+('mohan', 'raj', 'mohan.raj@example.com', '7654321098', 'resume3'),
+('kavitha', 'suresh', 'kavitha.suresh@example.com', null, 'resume4'),  
+('pranav', 'raman', 'pranav.raman@example.com', '5432109876', 'resume5'),
+('keerthi', 'ravi', 'keerthi.ravi@example.com', null, 'resume6'),  
+('santhosh', 'nathan', 'santhosh.nathan@example.com', '3210987654', 'resume7'),
+('meera', 'venkat', 'meera.venkat@example.com', '2109876543', 'resume8'),
+('naveen', 'shankar', 'naveen.shankar@example.com', '1098765432', 'resume9'),
+('sindhu', 'varma', 'sindhu.varma@example.com', '1987654321', 'resume10');
+insert into applications (jobid, applicantid, applicationdate, coverletter) values
+(1, 1, '2025-03-11 09:00:00', 'cover1'),
+(2, 2, '2025-03-12 10:00:00', 'cover2'),
+(3, 3, '2025-03-13 11:00:00', 'cover3'),
+(4, 4, '2025-03-14 12:00:00', 'cover4'),
+(5, 5, '2025-03-15 13:00:00', 'cover5'),
+(6, 8, '2025-03-16 14:00:00', 'cover6'),
+(7, 9, '2025-03-17 15:00:00', 'cover7'),
+(8, 10, '2025-03-18 16:00:00', 'cover8'),
+(9, 1, '2025-03-19 17:00:00', 'cover9'),
+(10, 3, '2025-03-20 18:00:00', 'cover10');
+
+alter table applicants add column Experience int not null ;
+update applicants set experience = 2 where applicantid = 1;
+update applicants set experience = 3 where applicantid = 2;
+update applicants set experience = 5 where applicantid = 3;
+update applicants set experience = 4 where applicantid = 4;
+update applicants set experience = 5 where applicantid = 5;
+update applicants set experience = 4 where applicantid = 6;
+update applicants set experience = 2 where applicantid = 7;
+update applicants set experience = 1 where applicantid = 8;
+update applicants set experience = 6 where applicantid = 9;
+update applicants set experience = 1 where applicantid = 10;
+select *from applicants;
+
+
+-- Write an SQL query to count the number of applications received for each job listing in the "Jobs" table. Display the job title and the corresponding application count. Ensure that it lists all jobs, even if they have no applications. --
+select jobs.JobTitle , count(applications.ApplicationID) as Total_application from jobs inner join Applications
+on jobs.JobID = applications.JobID
+group by JobTitle;
+
+-- Develop an SQL query that retrieves job listings from the "Jobs" table within a specified salary  range. Allow parameters for the minimum and maximum salary values. Display the job title,  company name, location, and salary for each matching job. 
+set @min_salary = 60000;
+set @max_salary = 100000;
+select jobs.jobtitle, companies.companyname, jobs.joblocation, jobs.salary
+from jobs
+join companies on jobs.companyid = companies.companyid
+where jobs.salary between @min_salary and @max_salary;
+
+-- Applicant job application history--
+select jobs.jobtitle, companies.companyname, applications.applicationdate
+from applications
+join jobs on applications.jobid = jobs.jobid
+join companies on jobs.companyid = companies.companyid
+where applications.applicantid = 3;
+
+-- Average salary excluding zero--
+select avg(salary) as average_salary
+from jobs
+where salary > 0;
+
+-- company job count--
+select companies.companyname, count(jobs.jobid) as job_count
+from jobs
+join companies on jobs.companyid = companies.companyid
+group by companies.companyname
+having count(jobs.jobid) = (select max(job_count) from ( select count(jobs.jobid) as job_count from jobs group by jobs.companyid) as temp
+);
+
+--  Find the applicants who have applied for positions in companies located in 'CityX' and have at  least 3 years of experience. 
+select first_name,last_name,experience from applicants
+join applications on applicants.applicantid = applications.applicantid
+join jobs on applications.jobid = jobs.jobid
+join companies on jobs.companyid = companies.companyid
+where companies.location = 'hyderabad' and applicants.experience >= 3;
+select * from applicants
+join applications on applicants.applicantid = applications.applicantid
+join jobs on applications.jobid = jobs.jobid
+join companies on jobs.companyid = companies.companyid
+where companies.location = 'hyderabad' and applicants.experience >= 3;
+
+-- Find the jobs that have not received any applications. --
+select jobs.jobtitle, companies.companyname
+from jobs
+join companies on jobs.companyid = companies.companyid
+left join applications on jobs.jobid = applications.jobid
+where applications.applicationid is null;
+
+-- Retrieve a list of job applicants along with the companies they have applied to and the positions they have applied for --
+select applicants.first_name, applicants.last_name, companies.companyname, jobs.jobtitle from applications
+join applicants on applications.applicantid = applicants.applicantid
+join jobs on applications.jobid = jobs.jobid
+join companies on jobs.companyid = companies.companyid;
+
+--  Retrieve a list of companies along with the count of jobs they have posted, even if they have not  received any applications-- 
+select companies.companyname, count(jobs.jobid) as job_count
+from companies
+left join jobs on companies.companyid = jobs.companyid
+group by companies.companyname;
+
+-- List all applicants along with the companies and positions they have applied for, including those who have not applied --
+select applicants.first_name, applicants.last_name, companies.companyname, jobs.jobtitle
+from applicants
+left join applications on applicants.applicantid = applications.applicantid
+left join jobs on applications.jobid = jobs.jobid
+left join companies on jobs.companyid = companies.companyid;
+
+-- Find companies that have posted jobs with a salary higher than the average salary of all jobs--
+select companies.companyname, jobs.jobtitle, jobs.salary from jobs
+join companies on jobs.companyid = companies.companyid
+where jobs.salary > (select avg(jobs.salary) from jobs);
+
+-- Display a list of applicants with their names and a concatenated string of their city and state --
+select first_name, last_name  from applicants;
+
+--  Retrieve a list of jobs with titles containing either 'Developer' or 'Engineer'--
+select JobID,Jobtitle from jobs 
+where Jobtitle like '%deve%' or Jobtitle like '%eng%';
+
+--  Retrieve a list of applicants and the jobs they have applied for, including those who have not applied and jobs without applicants--
+select applicants.first_name, applicants.last_name, companies.companyname, jobs.jobtitle
+from applicants
+left join applications on applicants.applicantid = applications.applicantid
+left join jobs on applications.jobid = jobs.jobid
+left join companies on jobs.companyid = companies.companyid;
+
+
+-- List all combinations of applicants and companies where the company is in a specific city and the applicant has more than 2 years of experience. For example: city=Chennai 
+select applicants.first_name, applicants.last_name, applicants.experience, companies.companyname, companies.location
+from applicants
+join applications on applicants.applicantid = applications.applicantid
+join jobs on applications.jobid = jobs.jobid
+join companies on jobs.companyid = companies.companyid
+where companies.location = 'bangalore' and applicants.experience > 2;
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
