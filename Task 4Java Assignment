@@ -1,0 +1,158 @@
+task4
+9. import java.util.Scanner;
+class ParcelTracking {
+    public static void main(String[] args) {
+        String[][] parcels = {
+                {"12345", "Parcel in transit"},
+                {"67890", "Parcel out for delivery"},
+                {"54321", "Parcel delivered"},
+                {"98765", "Parcel in transit"}
+        };
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter tracking number: ");
+        String trackingNumber = scanner.nextLine();
+
+        boolean found = false;
+        for (int i = 0; i < parcels.length; i++) {
+            if (parcels[i][0].equals(trackingNumber)) {
+                System.out.println("Status: " + parcels[i][1]);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Tracking number not found.");
+        }
+
+        scanner.close();
+    }
+}
+10.class CustomerValidation {
+    static boolean validate(String data, String type) {
+        if (type.equals("name")) {
+            return data.matches("[A-Za-z ]+");
+        }
+        if (type.equals("address")) {
+            return data.matches("[A-Za-z0-9 ]+");
+        }
+        if (type.equals("phone")) {
+            return data.matches("\\d{3}-\\d{3}-\\d{4}");
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(validate("Jhansi", "name"));
+        System.out.println(validate("123 Main Street", "address"));
+        System.out.println(validate("987-654-3210", "phone")); 
+    }
+}
+11.class AddressFormatter {
+    static String formatAddress(String street, String city, String state, String zip) {
+        street = capitalizeWords(street);
+        city = capitalizeWords(city);
+        state = state.toUpperCase(); 
+        zip = zip.matches("\\d{5}") ? zip : "Invalid ZIP"; // Ensures ZIP is 5 digits
+
+        return street + ", " + city + ", " + state + " - " + zip;
+    }
+
+    static String capitalizeWords(String text) {
+        String[] words = text.split(" ");
+        StringBuilder formatted = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                formatted.append(Character.toUpperCase(word.charAt(0)))
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
+            }
+        }
+        return formatted.toString().trim();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(formatAddress("123 main street", "new york", "ny", "10001"));
+        System.out.println(formatAddress("456 elm st", "los angeles", "ca", "90012"));
+    }
+}
+12.import java.time.LocalDate;
+class OrderConfirmation {
+    static String generateEmail(String name, int orderNumber, String address, int deliveryDays) {
+        LocalDate deliveryDate = LocalDate.now().plusDays(deliveryDays);
+
+        return "Subject: Order Confirmation #" + orderNumber + "\n\n" +
+                "Dear " + name + ",\n\n" +
+                "Thank you for your order!\n" +
+                "Order Number: " + orderNumber + "\n" +
+                "Delivery Address: " + address + "\n" +
+                "Expected Delivery Date: " + deliveryDate + "\n\n" +
+                "We appreciate your business!\n" +
+                "Best regards,\nYour Company";
+    }
+
+    public static void main(String[] args) {
+        String email = generateEmail("Jhansi", 123456, "123 Main St, Uthukottai, TN", 5);
+        System.out.println(email);
+    }
+}
+13.class ShippingCostCalculator {
+    static double calculateShippingCost(String source, String destination, double weight) {
+        int distance = Math.abs(source.length() - destination.length()) * 10;
+        double costPerKg = 5.0;
+        double baseCost = 20.0;
+        return baseCost + (distance * 0.5) + (weight * costPerKg);
+    }
+
+    public static void main(String[] args) {
+        String source = "Chennai";
+        String destination = "Bangalore";
+        double weight = 2.5;
+
+        double cost = calculateShippingCost(source, destination, weight);
+        System.out.println("Shipping cost from " + source + " to " + destination + " for " + weight + "kg is: ₹" + cost);
+    }
+}
+14.import java.util.Random;
+class Basic {
+    static String generatePassword(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+        Random random = new Random();
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            password.append(chars.charAt(random.nextInt(chars.length())));
+        }
+
+        return password.toString();
+    }
+      public static void main(String[] args) {
+        int length = 10;
+        System.out.println("Generated Password: " + generatePassword(length));
+    }
+}
+15.class AddressMatcher {
+    static void findSimilarAddresses(String[] addresses, String searchAddress) {
+        System.out.println("Similar Addresses to: " + searchAddress);
+        for (String address : addresses) {
+            if (address.toLowerCase().contains(searchAddress.toLowerCase())) {
+                System.out.println(address);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        String[] addresses = {
+            "123 Main Street, Uthukottai",
+            "124 Main Street, Uthukottai",
+            "567 Park Avenue, Chennai",
+            "123 Main St, Uthukottai",
+            "789 Lake Road, Bangalore"
+        };
+
+        String searchAddress = "Main Street";
+        findSimilarAddresses(addresses, searchAddress);
+    }
+}
+
+
