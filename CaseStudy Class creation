@@ -1,0 +1,183 @@
+package entity;
+
+public class customer {
+	 private int customerId;
+	    private String name;
+	    private String email;
+	    private String password;
+
+	    public Customer() {}
+
+	    public Customer(int customerId, String name, String email, String password) {
+	        this.customerId = customerId;
+	        this.name = name;
+	        this.email = email;
+	        this.password = password;
+	    }
+
+	    // Getters & Setters
+	    public int getCustomerId() { return customerId; }
+	    public void setCustomerId(int customerId) { this.customerId = customerId; }
+
+	    public String getName() { return name; }
+	    public void setName(String name) { this.name = name; }
+
+	    public String getEmail() { return email; }
+	    public void setEmail(String email) { this.email = email; }
+
+	    public String getPassword() { return password; }
+	    public void setPassword(String password) { this.password = password; }
+	}
+
+}
+package entity;
+
+public class Product {
+    private int productId;
+    private String name;
+    private double price;
+    private String description;
+    private int stockQuantity;
+
+    public Product() {}
+
+    public Product(int productId, String name, double price, String description, int stockQuantity) {
+        this.productId = productId;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.stockQuantity = stockQuantity;
+    }
+
+    // Getters & Setters
+    public int getProductId() { return productId; }
+    public void setProductId(int productId) { this.productId = productId; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public int getStockQuantity() { return stockQuantity; }
+    public void setStockQuantity(int stockQuantity) { this.stockQuantity = stockQuantity; }
+}
+package entity;
+
+public class Cart {
+    private int cartId;
+    private int customerId;
+    private int productId;
+    private int quantity;
+
+    public Cart() {}
+
+    public Cart(int cartId, int customerId, int productId, int quantity) {
+        this.cartId = cartId;
+        this.customerId = customerId;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
+    // Getters & Setters
+    public int getCartId() { return cartId; }
+    public void setCartId(int cartId) { this.cartId = cartId; }
+
+    public int getCustomerId() { return customerId; }
+    public void setCustomerId(int customerId) { this.customerId = customerId; }
+
+    public int getProductId() { return productId; }
+    public void setProductId(int productId) { this.productId = productId; }
+
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+}
+package entity;
+
+import java.sql.Timestamp;
+
+public class Order {
+    private int orderId;
+    private int customerId;
+    private Timestamp orderDate;
+    private double totalPrice;
+    private String shippingAddress;
+
+    public Order() {}
+
+    public Order(int orderId, int customerId, Timestamp orderDate, double totalPrice, String shippingAddress) {
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.orderDate = orderDate;
+        this.totalPrice = totalPrice;
+        this.shippingAddress = shippingAddress;
+    }
+
+    // Getters & Setters
+    public int getOrderId() { return orderId; }
+    public void setOrderId(int orderId) { this.orderId = orderId; }
+
+    public int getCustomerId() { return customerId; }
+    public void setCustomerId(int customerId) { this.customerId = customerId; }
+
+    public Timestamp getOrderDate() { return orderDate; }
+    public void setOrderDate(Timestamp orderDate) { this.orderDate = orderDate; }
+
+    public double getTotalPrice() { return totalPrice; }
+    public void setTotalPrice(double totalPrice) { this.totalPrice = totalPrice; }
+
+    public String getShippingAddress() { return shippingAddress; }
+    public void setShippingAddress(String shippingAddress) { this.shippingAddress = shippingAddress; }
+}
+package entity;
+
+public class OrderItem {
+    private int orderItemId;
+    private int orderId;
+    private int productId;
+    private int quantity;
+
+    public OrderItem() {}
+
+    public OrderItem(int orderItemId, int orderId, int productId, int quantity) {
+        this.orderItemId = orderItemId;
+        this.orderId = orderId;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
+    // Getters & Setters
+    public int getOrderItemId() { return orderItemId; }
+    public void setOrderItemId(int orderItemId) { this.orderItemId = orderItemId; }
+
+    public int getOrderId() { return orderId; }
+    public void setOrderId(int orderId) { this.orderId = orderId; }
+
+    public int getProductId() { return productId; }
+    public void setProductId(int productId) { this.productId = productId; }
+
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+}
+package dao;
+
+import entity.Customer;
+import entity.Product;
+
+import java.util.List;
+import java.util.Map;
+
+public interface OrderProcessorRepository {
+    boolean createProduct(Product product);
+    boolean createCustomer(Customer customer);
+    boolean deleteProduct(int productId);
+    boolean deleteCustomer(int customerId);
+    boolean addToCart(Customer customer, Product product, int quantity);
+    boolean removeFromCart(Customer customer, Product product);
+    List<Product> getAllFromCart(Customer customer);
+    boolean placeOrder(Customer customer, List<Map<Product, Integer>> productList, String shippingAddress);
+    List<Map<Product, Integer>> getOrdersByCustomer(int customerId);
+}
