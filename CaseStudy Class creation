@@ -15,7 +15,6 @@ public class customer {
 	        this.password = password;
 	    }
 
-	    // Getters & Setters
 	    public int getCustomerId() { return customerId; }
 	    public void setCustomerId(int customerId) { this.customerId = customerId; }
 
@@ -49,7 +48,7 @@ public class Product {
         this.stockQuantity = stockQuantity;
     }
 
-    // Getters & Setters
+ 
     public int getProductId() { return productId; }
     public void setProductId(int productId) { this.productId = productId; }
 
@@ -82,7 +81,7 @@ public class Cart {
         this.quantity = quantity;
     }
 
-    // Getters & Setters
+    
     public int getCartId() { return cartId; }
     public void setCartId(int cartId) { this.cartId = cartId; }
 
@@ -116,7 +115,7 @@ public class Order {
         this.shippingAddress = shippingAddress;
     }
 
-    // Getters & Setters
+   
     public int getOrderId() { return orderId; }
     public void setOrderId(int orderId) { this.orderId = orderId; }
 
@@ -149,7 +148,6 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    // Getters & Setters
     public int getOrderItemId() { return orderItemId; }
     public void setOrderItemId(int orderItemId) { this.orderItemId = orderItemId; }
 
