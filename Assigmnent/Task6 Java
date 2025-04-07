@@ -1,1 +1,21 @@
+ Interface creation:
+1.package service;
 
+import model.Courier;
+import java.util.List;
+
+public interface ICourierUserService {
+    String placeOrder(Courier courierObj);
+    String getOrderStatus(String trackingNumber);
+    boolean cancelOrder(String trackingNumber);
+    List<Courier> getAssignedOrder(int courierStaffId);
+}
+2.package service;
+
+import model.Employee;
+
+public interface ICourierAdminService {
+    int addCourierStaff(Employee obj);
+}
+
+Model Class :
