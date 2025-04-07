@@ -1,0 +1,48 @@
+package exception;
+
+public class TrackingNumberNotFoundException extends RuntimeException {
+    public TrackingNumberNotFoundException(String message) {
+        super(message);
+    }
+}
+
+import exception.TrackingNumberNotFoundException;
+import exception.InvalidEmployeeIdException;
+
+public class CourierServiceImpl {
+
+    public void getOrderStatus(String trackingNumber) {
+        if (trackingNumber == null || trackingNumber.isEmpty()) {
+            throw new TrackingNumberNotFoundException("Tracking number is invalid or not found!");
+        }
+        System.out.println("Tracking Number Status: In Transit");
+    }
+
+    public void findEmployeeById(int staffId) {
+        if (staffId != 1001) { // assuming only 1001 exists
+            throw new InvalidEmployeeIdException("Employee ID " + staffId + " not found!");
+        }
+        System.out.println("Employee found: Staff ID " + staffId);
+    }
+}
+import exception.*;
+
+public class CourierApp {
+    public static void main(String[] args) {
+        CourierServiceImpl service = new CourierServiceImpl();
+
+        try {
+            service.getOrderStatus(""); // will throw TrackingNumberNotFoundException
+        } catch (TrackingNumberNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        try {
+            service.findEmployeeById(1234); // will throw InvalidEmployeeIdException
+        } catch (InvalidEmployeeIdException e) {
+            System.out.println("Error: " + e.getMessage());
+        } finally {
+            System.out.println("Thank you for using Courier Management System!");
+        }
+    }
+}
