@@ -19,3 +19,61 @@ public interface ICourierAdminService {
 }
 
 Model Class :
+1.package model;
+
+public class Courier {
+
+    private static int trackIdCounter = 1000; 
+    private String trackingNumber;
+    private String senderName;
+    private String receiverName;
+    private String status;
+    private int assignedStaffId;
+
+    public Courier(String senderName, String receiverName) {
+        this.senderName = senderName;
+        this.receiverName = receiverName;
+        this.status = "YetToTransit";
+        this.trackingNumber = "TRK" + trackIdCounter++;
+    }
+
+    
+}
+2.package model;
+
+public class Employee {
+    private int staffId;
+    private String name;
+    private String contactNumber;
+
+    public Employee(int staffId, String name, String contactNumber) {
+        this.staffId = staffId;
+        this.name = name;
+        this.contactNumber = contactNumber;
+    }
+
+    public int getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(int staffId) {
+        this.staffId = staffId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+}
+
