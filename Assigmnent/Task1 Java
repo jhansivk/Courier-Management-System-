@@ -1,0 +1,150 @@
+1.class Status {
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+
+        System.out.println("Enter the order status (Processing, Delivered, Cancelled): ");
+        String status = scanner.nextLine();
+
+
+        if (status.equalsIgnoreCase("Delivered")) {
+            System.out.println("Your order has been delivered!");
+        } else if (status.equalsIgnoreCase("Processing")) {
+            System.out.println(" Your order is still being processed.");
+        } else if (status.equalsIgnoreCase("Cancelled")) {
+            System.out.println(" Your order has been cancelled.");
+        } else {
+            System.out.println("Invalid order status! Please enter Processing, Delivered, or Cancelled.");
+        }
+
+
+        scanner.close();
+    }
+}
+2.class ParcelCategorizer {
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+
+        System.out.println("Enter the weight of the parcel (in kg): ");
+        double weight = scanner.nextDouble();
+
+
+        int weightCategory = (weight <= 2) ? 1 : (weight <= 5) ? 2 : 3;
+
+
+        switch (weightCategory) {
+            case 1:
+                System.out.println(" Your parcel is categorized as: Light");
+                break;
+            case 2:
+                System.out.println(" Your parcel is categorized as: Medium");
+                break;
+            case 3:
+                System.out.println(" Your parcel is categorized as: Heavy");
+                break;
+            default:
+                System.out.println("Invalid weight entered!");
+        }
+
+        
+        scanner.close();
+    }
+}
+3.import java.util.Scanner;
+import java.util.HashMap;
+class UserAuthentication {
+    public static void main(String[] args) {
+
+        HashMap<String, String> users = new HashMap<>();
+
+
+        users.put("rajesh.kumar@example.com", "pass123");
+        users.put("priya.sharma@example.com", "priya@123");
+        users.put("arun.mehta@example.com", "arun@987");
+        users.put("deepika.reddy@example.com", "deepika@456");
+        users.put("sandeep.joshi@example.com", "sandeep@789");
+
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("===== Welcome to Courier Management Login System =====");
+        System.out.print("Enter your Email: ");
+        String email = scanner.nextLine();
+
+        System.out.print("Enter your Password: ");
+        String password = scanner.nextLine();
+
+
+        if (users.containsKey(email)) {
+            if (users.get(email).equals(password)) {
+                System.out.println("\n Login Successful! Welcome, " + email);
+            } else {
+                System.out.println("\n Incorrect Password! Please try again.");
+            }
+        } else {
+            System.out.println("\n Email not registered. Please sign up.");
+        }
+
+
+        scanner.close();
+    }
+}
+4.import java.util.Scanner;
+
+class Courier {
+    String name;
+    String location;
+    double maxCapacity;
+    boolean available;
+
+
+    public Courier(String name, String location, double maxCapacity) {
+        this.name = name;
+        this.location = location;
+        this.maxCapacity = maxCapacity;
+        this.available = true;
+    }
+}
+
+class CourierAssignment {
+    public static void main(String[] args) {
+
+        Courier[] couriers = {
+                new Courier("Rajesh", "Bangalore", 10.0),
+                new Courier("Priya", "Delhi", 8.0),
+                new Courier("Arun", "Kolkata", 5.0),
+                new Courier("Deepika", "Hyderabad", 12.0),
+                new Courier("Sandeep", "Chennai", 15.0)
+        };
+
+        Scanner scanner = new Scanner(System.in);
+System.out.println("Enter shipment destination:");
+        String shipmentLocation = scanner.nextLine();
+
+        System.out.println("Enter shipment weight (kg):");
+        double shipmentWeight = scanner.nextDouble();
+
+
+        Courier assignedCourier = null;
+        for (Courier courier : couriers) {
+            if (courier.available && courier.location.equalsIgnoreCase(shipmentLocation)
+                    && shipmentWeight <= courier.maxCapacity) {
+                assignedCourier = courier;
+                courier.available = false;
+                break;
+            }
+        }
+
+
+        if (assignedCourier != null) {
+            System.out.println("\n Assigned Courier: " + assignedCourier.name);
+        } else {
+            System.out.println("\n️ No available courier matches the criteria.");
+        }
+
+        scanner.close();
+    }
+}
