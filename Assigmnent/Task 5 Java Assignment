@@ -1,1 +1,187 @@
+1. package entities;
 
+public class User {
+    private int userID;
+    private String userName;
+    private String email;
+    private String password;
+    private String contactNumber;
+    private String address;
+
+   
+    public User() {}
+
+  
+    public User(int userID, String userName, String email, String password, String contactNumber, String address) {
+        this.userID = userID;
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.contactNumber = contactNumber;
+        this.address = address;
+    }
+
+    
+    public int getUserID() { return userID; }
+    public void setUserID(int userID) { this.userID = userID; }
+
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getContactNumber() { return contactNumber; }
+    public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+   
+    @Override
+    public String toString() {
+        return "User{" +
+                "userID=" + userID +
+                ", userName='" + userName + '\'' +
+                ", email='" + email + '\'' +
+                ", contactNumber='" + contactNumber + '\'' +
+                ", address='" + address + '\'' +
+                '}';
+    }
+}
+2.package entities;
+
+import java.util.Date;
+
+public class Courier {
+    private long courierID;
+    private String senderName;
+    private String senderAddress;
+    private String receiverName;
+    private String receiverAddress;
+    private double weight;
+    private String status;
+    private String trackingNumber;
+    private Date deliveryDate;
+    private long userId;
+
+    public Courier() {}
+
+    public Courier(long courierID, String senderName, String senderAddress, String receiverName, String receiverAddress, double weight, String status, String trackingNumber, Date deliveryDate, long userId) {
+        this.courierID = courierID;
+        this.senderName = senderName;
+        this.senderAddress = senderAddress;
+        this.receiverName = receiverName;
+        this.receiverAddress = receiverAddress;
+        this.weight = weight;
+        this.status = status;
+        this.trackingNumber = trackingNumber;
+        this.deliveryDate = deliveryDate;
+        this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "Courier{courierID=" + courierID + ", senderName='" + senderName + "', receiverName='" + receiverName + "', status='" + status + "', trackingNumber='" + trackingNumber + "'}";
+    }
+}
+3.package entities;
+
+public class Employee {
+    private long employeeID;
+    private String employeeName;
+    private String email;
+    private String contactNumber;
+    private String role;
+    private double salary;
+
+    public Employee() {}
+
+    public Employee(long employeeID, String employeeName, String email, String contactNumber, String role, double salary) {
+        this.employeeID = employeeID;
+        this.employeeName = employeeName;
+        this.email = email;
+        this.contactNumber = contactNumber;
+        this.role = role;
+        this.salary = salary;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{employeeID=" + employeeID + ", employeeName='" + employeeName + "', role='" + role + "', salary=" + salary + "}";
+    }
+}
+4.package entities;
+
+public class Location {
+    private long locationID;
+    private String locationName;
+    private String address;
+
+    public Location() {}
+
+    public Location(long locationID, String locationName, String address) {
+        this.locationID = locationID;
+        this.locationName = locationName;
+        this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Location{locationID=" + locationID + ", locationName='" + locationName + "'}";
+    }
+}
+5.package entities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CourierCompany {
+    private String companyName;
+    private List<Courier> courierDetails;
+    private List<Employee> employeeDetails;
+    private List<Location> locationDetails;
+
+    public CourierCompany() {
+        this.courierDetails = new ArrayList<>();
+        this.employeeDetails = new ArrayList<>();
+        this.locationDetails = new ArrayList<>();
+    }
+
+    public CourierCompany(String companyName) {
+        this();
+        this.companyName = companyName;
+    }
+
+    @Override
+    public String toString() {
+        return "CourierCompany{companyName='" + companyName + "'}";
+    }
+}
+6.package entities;
+
+import java.util.Date;
+
+public class Payment {
+    private long paymentID;
+    private long courierID;
+    private double amount;
+    private Date paymentDate;
+
+    public Payment() {}
+
+    public Payment(long paymentID, long courierID, double amount, Date paymentDate) {
+        this.paymentID = paymentID;
+        this.courierID = courierID;
+        this.amount = amount;
+        this.paymentDate = paymentDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Payment{paymentID=" + paymentID + ", amount=" + amount + ", paymentDate=" + paymentDate + "}";
+    }
+}
