@@ -1,0 +1,368 @@
+package util;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+public class PropertyUtil {
+
+    private static final String PROPERTY_FILE = "application.properties"; // keep in project root
+
+    public static Properties loadProperties() {
+        Properties properties = new Properties();
+        try (FileInputStream input = new FileInputStream(PROPERTY_FILE)) {
+            properties.load(input);
+        } catch (IOException e) {
+            System.err.println("Error loading properties file: " + e.getMessage());
+        }
+        return properties;
+    }
+}
+
+public class DBConnection {
+
+    public static Connection getConnection() {
+        Connection connection = null;
+        try {
+            Properties props = PropertyUtil.loadProperties();
+            String url = props.getProperty("db.url");
+            String username = props.getProperty("db.username");
+            String password = props.getProperty("db.password");
+
+            connection = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            System.err.println("Database connection failed: " + e.getMessage());
+        }
+        return connection;
+    }
+}
+
+db.properties:
+hostname=localhost
+dbname=ecommerce
+username=root
+password=yourpassword
+port=3306
+package main;
+
+CLASS MAinApp:
+
+import myexceptions.CustomerNotFoundException;
+import myexceptions.ProductNotFoundException;
+import myexceptions.OrderNotFoundException;
+
+public class MainApp {
+    public static void main(String[] args) {
+        try {
+            validateCustomerId(5);
+            validateProductId(10);
+            validateOrderId(15);
+        } catch (CustomerNotFoundException | ProductNotFoundException | OrderNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    static void validateCustomerId(int customerId) throws CustomerNotFoundException {
+        if (customerId != 1) { // Assume only customerId=1 is valid
+            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found.");
+        }
+    }
+
+    static void validateProductId(int productId) throws ProductNotFoundException {
+        if (productId != 2) {
+            throw new ProductNotFoundException("Product with ID " + productId + " not found.");
+        }
+    }
+
+    static void validateOrderId(int orderId) throws OrderNotFoundException {
+        if (orderId != 3) {
+            throw new OrderNotFoundException("Order with ID " + orderId + " not found.");
+        }
+    }
+}
+
+CLASS EcomApp:
+package app;
+
+import service.EcomServiceImpl;
+import java.util.Scanner;
+
+public class EcomApp {
+
+    public static void main(String[] args) {
+
+        EcomServiceImpl service = new EcomServiceImpl();
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Choose an option:");
+            System.out.println("1. Register Customer");
+            System.out.println("2. Create Product");
+            System.out.println("3. Delete Product");
+            System.out.println("4. Add to Cart");
+            System.out.println("5. View Cart");
+            System.out.println("6. Place Order");
+            System.out.println("7. View Customer Order");
+            System.out.println("8. Exit");
+
+            int choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    service.registerCustomer();
+                    break;
+                case 2:
+                    service.createProduct();
+                    break;
+                case 3:
+                    service.deleteProduct();
+                    break;
+                case 4:
+                    service.addToCart();
+                    break;
+                case 5:
+                    service.viewCart();
+                    break;
+                case 6:
+                    service.placeOrder();
+                    break;
+                case 7:
+                    service.viewCustomerOrder();
+                    break;
+                case 8:
+                    System.out.println("Exiting...");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid Choice");
+            }
+        }
+    }
+}
+
+CLASS EcomService:
+package service;
+
+public interface EcomService {
+
+    void registerCustomer();
+
+    void createProduct();
+
+    void deleteProduct();
+
+    void addToCart();
+
+    void viewCart();
+
+    void placeOrder();
+
+    void viewCustomerOrder();
+}
+
+Class EcomServiceImpl
+package service;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+import util.DBConnection;
+import myexceptions.CustomerNotFoundException;
+import myexceptions.ProductNotFoundException;
+import myexceptions.OrderNotFoundException;
+
+public class EcomServiceImpl implements EcomService {
+
+    Scanner scanner = new Scanner(System.in);
+
+    @Override
+    public void registerCustomer() {
+        System.out.println("--- Register Customer ---");
+        System.out.print("Enter Customer Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter Customer Email: ");
+        String email = scanner.nextLine();
+
+        Connection conn = DBConnection.getConnection();
+        if (conn != null) {
+            try {
+                String sql = "INSERT INTO customers (name, email) VALUES (?, ?)";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, name);
+                ps.setString(2, email);
+                int rowsInserted = ps.executeUpdate();
+                if (rowsInserted > 0) {
+                    System.out.println("Customer registered successfully!");
+                }
+            } catch (SQLException e) {
+                System.out.println("Error registering customer: " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void createProduct() {
+        System.out.println("--- Create Product ---");
+        System.out.print("Enter Product Name: ");
+        String productName = scanner.nextLine();
+        System.out.print("Enter Product Price: ");
+        double price = scanner.nextDouble();
+        scanner.nextLine();
+
+        Connection conn = DBConnection.getConnection();
+        if (conn != null) {
+            try {
+                String sql = "INSERT INTO products (name, price) VALUES (?, ?)";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, productName);
+                ps.setDouble(2, price);
+                int rowsInserted = ps.executeUpdate();
+                if (rowsInserted > 0) {
+                    System.out.println("Product created successfully!");
+                }
+            } catch (SQLException e) {
+                System.out.println("Error creating product: " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void deleteProduct() {
+        System.out.println("--- Delete Product ---");
+        System.out.print("Enter Product ID to delete: ");
+        int productId = scanner.nextInt();
+        scanner.nextLine();
+
+        Connection conn = DBConnection.getConnection();
+        if (conn != null) {
+            try {
+                String sql = "DELETE FROM products WHERE id = ?";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setInt(1, productId);
+                int rowsDeleted = ps.executeUpdate();
+                if (rowsDeleted > 0) {
+                    System.out.println("Product deleted successfully!");
+                } else {
+                    throw new ProductNotFoundException("Product with ID " + productId + " not found.");
+                }
+            } catch (SQLException | ProductNotFoundException e) {
+                System.out.println("Error deleting product: " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void addToCart() {
+        System.out.println("--- Add to Cart ---");
+        System.out.print("Enter Customer ID: ");
+        int customerId = scanner.nextInt();
+        System.out.print("Enter Product ID: ");
+        int productId = scanner.nextInt();
+        scanner.nextLine();
+
+        Connection conn = DBConnection.getConnection();
+        if (conn != null) {
+            try {
+                String sql = "INSERT INTO cart (customer_id, product_id) VALUES (?, ?)";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setInt(1, customerId);
+                ps.setInt(2, productId);
+                int rowsInserted = ps.executeUpdate();
+                if (rowsInserted > 0) {
+                    System.out.println("Product added to cart successfully!");
+                }
+            } catch (SQLException e) {
+                System.out.println("Error adding to cart: " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void viewCart() {
+        System.out.println("--- View Cart ---");
+        System.out.print("Enter Customer ID: ");
+        int customerId = scanner.nextInt();
+        scanner.nextLine();
+
+        Connection conn = DBConnection.getConnection();
+        if (conn != null) {
+            try {
+                String sql = "SELECT p.name, p.price FROM cart c JOIN products p ON c.product_id = p.id WHERE c.customer_id = ?";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setInt(1, customerId);
+                ResultSet rs = ps.executeQuery();
+
+                System.out.println("Your Cart:");
+                boolean hasProducts = false;
+                while (rs.next()) {
+                    hasProducts = true;
+                    System.out.println("- " + rs.getString("name") + " : $" + rs.getDouble("price"));
+                }
+                if (!hasProducts) {
+                    System.out.println("Cart is empty.");
+                }
+            } catch (SQLException e) {
+                System.out.println("Error viewing cart: " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void placeOrder() {
+        System.out.println("--- Place Order ---");
+        System.out.print("Enter Customer ID: ");
+        int customerId = scanner.nextInt();
+        scanner.nextLine();
+
+        Connection conn = DBConnection.getConnection();
+        if (conn != null) {
+            try {
+                String sql = "INSERT INTO orders (customer_id) VALUES (?)";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setInt(1, customerId);
+                int rowsInserted = ps.executeUpdate();
+                if (rowsInserted > 0) {
+                    System.out.println("Order placed successfully!");
+                    // Clear cart after placing order
+                    String clearCartSql = "DELETE FROM cart WHERE customer_id = ?";
+                    PreparedStatement clearCartPs = conn.prepareStatement(clearCartSql);
+                    clearCartPs.setInt(1, customerId);
+                    clearCartPs.executeUpdate();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error placing order: " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void viewCustomerOrder() {
+        System.out.println("--- View Customer Order ---");
+        System.out.print("Enter Customer ID: ");
+        int customerId = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        Connection conn = DBConnection.getConnection();
+        if (conn != null) {
+            try {
+                String sql = "SELECT id FROM orders WHERE customer_id = ?";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setInt(1, customerId);
+                ResultSet rs = ps.executeQuery();
+
+                boolean hasOrder = false;
+                while (rs.next()) {
+                    hasOrder = true;
+                    System.out.println("Order ID: " + rs.getInt("id"));
+                }
+                if (!hasOrder) {
+                    throw new OrderNotFoundException("No orders found for Customer ID " + customerId);
+                }
+            } catch (SQLException | OrderNotFoundException e) {
+                System.out.println("Error viewing orders: " + e.getMessage());
+            }
+        }
+    }
+}
