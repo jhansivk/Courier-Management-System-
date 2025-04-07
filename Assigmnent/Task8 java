@@ -1,1 +1,73 @@
+package entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CourierCompanyCollection {
+    private List<Courier> couriers;
+
+    public CourierCompanyCollection() {
+        couriers = new ArrayList<>();
+    }
+
+    public List<Courier> getCouriers() {
+        return couriers;
+    }
+
+    public void setCouriers(List<Courier> couriers) {
+        this.couriers = couriers;
+    }
+
+    public void addCourier(Courier courier) {
+        couriers.add(courier);
+    }
+
+    public boolean removeCourier(Courier courier) {
+        return couriers.remove(courier);
+    }
+
+    public Courier getCourierById(int id) {
+        for (Courier courier : couriers) {
+            if (courier.getId() == id) {
+                return courier;
+            }
+        }
+        return null;
+    }
+}
+
+package dao;
+
+import entity.Courier;
+import entity.CourierCompanyCollection;
+import java.util.List;
+
+public class CourierUserServiceCollectionImpl implements ICourierUserService {
+    
+    private CourierCompanyCollection companyObj = new CourierCompanyCollection();
+
+    @Override
+    public void addCourier(Courier courier) {
+        companyObj.addCourier(courier);
+    }
+
+    @Override
+    public boolean deleteCourier(int id) {
+        Courier courier = companyObj.getCourierById(id);
+        if (courier != null) {
+            return companyObj.removeCourier(courier);
+        }
+        return false;
+    }
+
+    @Override
+    public Courier findCourier(int id) {
+        return companyObj.getCourierById(id);
+    }
+
+    @Override
+    public List<Courier> listAllCouriers() {
+        return companyObj.getCouriers();
+    }
+}
 
