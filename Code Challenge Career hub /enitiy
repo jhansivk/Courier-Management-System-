@@ -1,0 +1,191 @@
+package entity;
+
+public class Applicant {
+    private int applicantID;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phone;
+    private String resume;
+
+    public Applicant() {}
+
+    public Applicant(int applicantID, String firstName, String lastName,
+                     String email, String phone, String resume) {
+        this.applicantID = applicantID;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+        this.resume = resume;
+    }
+
+    public int getApplicantID() { return applicantID; }
+    public void setApplicantID(int applicantID) { this.applicantID = applicantID; }
+
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getResume() { return resume; }
+    public void setResume(String resume) { this.resume = resume; }
+}
+package entity;
+
+public class Company {
+    private int companyID;
+    private String companyName;
+    private String location;
+
+    public Company() {}
+
+    public Company(int companyID, String companyName, String location) {
+        this.companyID = companyID;
+        this.companyName = companyName;
+        this.location = location;
+    }
+
+    public int getCompanyID() { return companyID; }
+    public void setCompanyID(int companyID) { this.companyID = companyID; }
+
+    public String getCompanyName() { return companyName; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+}
+import java.time.LocalDateTime;
+
+public class JobApplication {
+    private int applicationID;
+    private int jobID;
+    private int applicantID;
+    private LocalDateTime applicationDate;
+    private String coverLetter;
+
+    public JobApplication() {}
+
+    public JobApplication(int applicationID, int jobID, int applicantID,
+                          LocalDateTime applicationDate, String coverLetter) {
+        this.applicationID = applicationID;
+        this.jobID = jobID;
+        this.applicantID = applicantID;
+        this.applicationDate = applicationDate;
+        this.coverLetter = coverLetter;
+    }
+
+    public int getApplicationID() { return applicationID; }
+    public void setApplicationID(int applicationID) { this.applicationID = applicationID; }
+
+    public int getJobID() { return jobID; }
+    public void setJobID(int jobID) { this.jobID = jobID; }
+
+    public int getApplicantID() { return applicantID; }
+    public void setApplicantID(int applicantID) { this.applicantID = applicantID; }
+
+    public LocalDateTime getApplicationDate() { return applicationDate; }
+    public void setApplicationDate(LocalDateTime applicationDate) { this.applicationDate = applicationDate; }
+
+    public String getCoverLetter() { return coverLetter; }
+    public void setCoverLetter(String coverLetter) { this.coverLetter = coverLetter; }
+}
+package entity;
+
+import java.time.LocalDateTime;
+
+public class JobListing {
+    private int jobID;
+    private int companyID;
+    private String jobTitle;
+    private String jobDescription;
+    private String jobLocation;
+    private double salary;
+    private String jobType;
+    private LocalDateTime postedDate;
+
+    public JobListing() {}
+
+    public JobListing(int jobID, int companyID, String jobTitle, String jobDescription,
+                      String jobLocation, double salary, String jobType, LocalDateTime postedDate) {
+        this.jobID = jobID;
+        this.companyID = companyID;
+        this.jobTitle = jobTitle;
+        this.jobDescription = jobDescription;
+        this.jobLocation = jobLocation;
+        this.salary = salary;
+        this.jobType = jobType;
+        this.postedDate = postedDate;
+    }
+
+    public int getJobID() {
+        return jobID;
+    }
+
+    public void setJobID(int jobID) {
+        this.jobID = jobID;
+    }
+
+    public int getCompanyID() {
+        return companyID;
+    }
+
+    public void setCompanyID(int companyID) {
+        this.companyID = companyID;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public String getJobDescription() {
+        return jobDescription;
+    }
+
+    public void setJobDescription(String jobDescription) {
+        this.jobDescription = jobDescription;
+    }
+
+    public String getJobLocation() {
+        return jobLocation;
+    }
+
+    public void setJobLocation(String jobLocation) {
+        this.jobLocation = jobLocation;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    public String getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(String jobType) {
+        this.jobType = jobType;
+    }
+
+    public LocalDateTime getPostedDate() {
+        return postedDate;
+    }
+
+    public void setPostedDate(LocalDateTime postedDate) {
+        this.postedDate = postedDate;
+    }
+}
