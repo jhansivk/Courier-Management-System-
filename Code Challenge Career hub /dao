@@ -1,0 +1,278 @@
+package dao;
+
+import entity.Applicant;
+import java.util.List;
+
+public interface ApplicantDAO {
+    void insertApplicant(Applicant applicant);
+    List<Applicant> getAllApplicants();
+}
+package dao;
+
+import entity.Applicant;
+import util.DBconnUtil; // updated import
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ApplicantDAOImpl implements ApplicantDAO {
+
+    @Override
+    public void insertApplicant(Applicant applicant) {
+        String sql = "INSERT INTO Applicant (FirstName, LastName, Email, Phone, Resume) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBconnUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, applicant.getFirstName());
+            pstmt.setString(2, applicant.getLastName());
+            pstmt.setString(3, applicant.getEmail());
+            pstmt.setString(4, applicant.getPhone());
+            pstmt.setString(5, applicant.getResume());
+
+            pstmt.executeUpdate();
+            System.out.println("Applicant registered successfully!");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<Applicant> getAllApplicants() {
+        List<Applicant> applicants = new ArrayList<>();
+        String sql = "SELECT * FROM Applicant";
+
+        try (Connection conn = DBconnUtil.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Applicant applicant = new Applicant();
+                applicant.setApplicantID(rs.getInt("ApplicantID"));
+                applicant.setFirstName(rs.getString("FirstName"));
+                applicant.setLastName(rs.getString("LastName"));
+                applicant.setEmail(rs.getString("Email"));
+                applicant.setPhone(rs.getString("Phone"));
+                applicant.setResume(rs.getString("Resume"));
+                applicants.add(applicant);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return applicants;
+    }
+}
+package dao;
+
+import entity.Company;
+import java.util.List;
+
+public interface CompanyDAO {
+    void insertCompany(Company company);
+    List<Company> getAllCompanies();
+}
+package dao;
+
+import entity.Company;
+import util.DBconnUtil; // updated import
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CompanyDAOImpl implements CompanyDAO {
+
+    @Override
+    public void insertCompany(Company company) {
+        String sql = "INSERT INTO Company (CompanyName, Location) VALUES (?, ?)";
+
+        try (Connection conn = DBconnUtil.getConnection(); // updated usage
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, company.getCompanyName());
+            pstmt.setString(2, company.getLocation());
+
+            pstmt.executeUpdate();
+            System.out.println("Company registered successfully!");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<Company> getAllCompanies() {
+        List<Company> companies = new ArrayList<>();
+        String sql = "SELECT * FROM Company";
+
+        try (Connection conn = DBconnUtil.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Company company = new Company();
+                company.setCompanyID(rs.getInt("CompanyID"));
+                company.setCompanyName(rs.getString("CompanyName"));
+                company.setLocation(rs.getString("Location"));
+                companies.add(company);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return companies;
+    }
+}
+package dao;
+
+import entity.JobApplication;
+import java.util.List;
+
+public interface JobApplicationDAO {
+    void insertApplication(JobApplication application);
+    List<JobApplication> getApplicationsForJob(int jobID);
+}
+package dao;
+
+import entity.JobApplication;
+import util.DBconnUtil; // updated import
+
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class JobApplicationDAOImpl implements JobApplicationDAO {
+
+    @Override
+    public void insertApplication(JobApplication application) {
+        String sql = "INSERT INTO JobApplication (JobID, ApplicantID, ApplicationDate, CoverLetter) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DBconnUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, application.getJobID());
+            pstmt.setInt(2, application.getApplicantID());
+            pstmt.setTimestamp(3, Timestamp.valueOf(application.getApplicationDate()));
+            pstmt.setString(4, application.getCoverLetter());
+
+            pstmt.executeUpdate();
+            System.out.println("Job application submitted successfully!");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<JobApplication> getApplicationsForJob(int jobID) {
+        List<JobApplication> applications = new ArrayList<>();
+        String sql = "SELECT * FROM JobApplication WHERE JobID = ?";
+
+        try (Connection conn = DBconnUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, jobID);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                JobApplication app = new JobApplication();
+                app.setApplicationID(rs.getInt("ApplicationID"));
+                app.setJobID(rs.getInt("JobID"));
+                app.setApplicantID(rs.getInt("ApplicantID"));
+                app.setApplicationDate(rs.getTimestamp("ApplicationDate").toLocalDateTime());
+                app.setCoverLetter(rs.getString("CoverLetter"));
+                applications.add(app);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return applications;
+    }
+}
+package dao;
+
+import entity.JobListing;
+import java.util.List;
+
+public interface JobListingDAO {
+    void insertJob(JobListing jobListing);
+    List<JobListing> getAllJobs();
+}
+package dao;
+
+import entity.JobListing;
+import util.DBconnUtil;
+
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class JobListingDAOImpl implements JobListingDAO {
+
+    @Override
+    public void insertJob(JobListing jobListing) {
+        String sql = "INSERT INTO JobListing (CompanyID, JobTitle, JobDescription, JobLocation, Salary, JobType, PostedDate) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBconnUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, jobListing.getCompanyID());
+            pstmt.setString(2, jobListing.getJobTitle());
+            pstmt.setString(3, jobListing.getJobDescription());
+            pstmt.setString(4, jobListing.getJobLocation());
+            pstmt.setDouble(5, jobListing.getSalary());
+            pstmt.setString(6, jobListing.getJobType());
+            pstmt.setTimestamp(7, Timestamp.valueOf(jobListing.getPostedDate()));
+
+            int rows = pstmt.executeUpdate();
+            if (rows > 0) {
+                System.out.println("Job inserted successfully into database!");
+            } else {
+                System.out.println("Job insertion failed!");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<JobListing> getAllJobs() {
+        List<JobListing> jobs = new ArrayList<>();
+        String sql = "SELECT * FROM JobListing";
+
+        try (Connection conn = DBconnUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                JobListing job = new JobListing();
+                job.setJobID(rs.getInt("JobID"));
+                job.setCompanyID(rs.getInt("CompanyID"));
+                job.setJobTitle(rs.getString("JobTitle"));
+                job.setJobDescription(rs.getString("JobDescription"));
+                job.setJobLocation(rs.getString("JobLocation"));
+                job.setSalary(rs.getDouble("Salary"));
+                job.setJobType(rs.getString("JobType"));
+                job.setPostedDate(rs.getTimestamp("PostedDate").toLocalDateTime());
+
+                jobs.add(job);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return jobs;
+    }
+}
