@@ -1,0 +1,175 @@
+//Implementation class for the interface 
+package com.hexaware.ecommerce.dao;
+
+import java.sql.*;
+import java.util.*;
+import com.hexaware.ecommerce.entity.*;
+import com.hexaware.ecommerce.util.DBConnUtil;
+import com.hexaware.ecommerce.exception.CustomerNotFoundException;
+import com.hexaware.ecommerce.exception.ProductNotFoundException;
+import com.hexaware.ecommerce.exception.OrderNotFoundException;
+
+public class OrderProcessorRepositoryImpl implements OrderProcessorRepository {
+    private Connection con = DBConnUtil.getConnection();
+
+    public boolean createProduct(Product product) {
+        try {
+            String sql = "INSERT INTO products (name, price, description, stockQuantity) VALUES (?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, product.getName());
+            ps.setDouble(2, product.getPrice());
+            ps.setString(3, product.getDescription());
+            ps.setInt(4, product.getStockQuantity());
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean createCustomer(Customer customer) {
+        try {
+            String sql = "INSERT INTO customers (name, email, password) VALUES (?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, customer.getName());
+            ps.setString(2, customer.getEmail());
+            ps.setString(3, customer.getPassword());
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean deleteProduct(int productId) {
+        try {
+            String sql = "DELETE FROM products WHERE product_id = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, productId);
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new ProductNotFoundException();
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean deleteCustomer(int customerId) {
+        try {
+            String sql = "DELETE FROM customers WHERE customer_id = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, customerId);
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new CustomerNotFoundException();
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean addToCart(Customer customer, Product product, int quantity) {
+        try {
+            String sql = "INSERT INTO cart (customer_id, product_id, quantity) VALUES (?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, customer.getCustomerId());
+            ps.setInt(2, product.getProductId());
+            ps.setInt(3, quantity);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean removeFromCart(Customer customer, Product product) {
+        try {
+            String sql = "DELETE FROM cart WHERE customer_id = ? AND product_id = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, customer.getCustomerId());
+            ps.setInt(2, product.getProductId());
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public List<Product> getAllFromCart(Customer customer) {
+        List<Product> products = new ArrayList<>();
+        try {
+            String sql = "SELECT p.product_id, p.name, p.price, p.description, p.stockQuantity FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.customer_id = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, customer.getCustomerId());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                products.add(new Product(rs.getInt("product_id"), rs.getString("name"), rs.getDouble("price"), rs.getString("description"), rs.getInt("stockQuantity")));
+            }
+        } catch (Exception e) {}
+        return products;
+    }
+
+    public boolean placeOrder(Customer customer, List<Map<Product, Integer>> productList, String shippingAddress) {
+        try {
+            con.setAutoCommit(false);
+            double total = 0;
+            for (Map<Product, Integer> entry : productList) {
+                for (Product p : entry.keySet()) {
+                    total += p.getPrice() * entry.get(p);
+                }
+            }
+            String sql1 = "INSERT INTO orders (customer_id, order_date, total_price, shipping_address) VALUES (?, ?, ?, ?)";
+            PreparedStatement ps1 = con.prepareStatement(sql1, Statement.RETURN_GENERATED_KEYS);
+            ps1.setInt(1, customer.getCustomerId());
+            ps1.setDate(2, new java.sql.Date(System.currentTimeMillis()));
+            ps1.setDouble(3, total);
+            ps1.setString(4, shippingAddress);
+            ps1.executeUpdate();
+            ResultSet rs = ps1.getGeneratedKeys();
+            int orderId = 0;
+            if (rs.next()) {
+                orderId = rs.getInt(1);
+            }
+            String sql2 = "INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?)";
+            PreparedStatement ps2 = con.prepareStatement(sql2);
+            for (Map<Product, Integer> entry : productList) {
+                for (Product p : entry.keySet()) {
+                    ps2.setInt(1, orderId);
+                    ps2.setInt(2, p.getProductId());
+                    ps2.setInt(3, entry.get(p));
+                    ps2.addBatch();
+                }
+            }
+            ps2.executeBatch();
+            con.commit();
+            return true;
+        } catch (Exception e) {
+            try {
+                con.rollback();
+            } catch (SQLException ex) {}
+            return false;
+        }
+    }
+
+    public List<Map<Product, Integer>> getOrdersByCustomer(int customerId) {
+        List<Map<Product, Integer>> list = new ArrayList<>();
+        try {
+            String sql = "SELECT p.product_id, p.name, p.price, p.description, p.stockQuantity, oi.quantity FROM orders o JOIN order_items oi ON o.order_id = oi.order_id JOIN products p ON oi.product_id = p.product_id WHERE o.customer_id = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, customerId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Map<Product, Integer> map = new HashMap<>();
+                Product p = new Product(rs.getInt("product_id"), rs.getString("name"), rs.getDouble("price"), rs.getString("description"), rs.getInt("stockQuantity"));
+                int qty = rs.getInt("quantity");
+                map.put(p, qty);
+                list.add(map);
+            }
+        } catch (Exception e) {}
+        return list;
+    }
+}
+  
