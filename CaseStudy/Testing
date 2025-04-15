@@ -1,74 +1,58 @@
-package service;
-
-import entity.Customer;
-import entity.Product;
-
-public class DummyOrderService {
-    
-    public boolean placeOrder(Customer customer, Product product) {
-        if (customer == null || product == null) {
-            throw new RuntimeException("Customer or Product not found in database");
-        }
-        return true;
-    }
-}
-package test;
+package com.hexaware.ecommerce.test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
-import entity.Customer;
-import entity.Product;
-import entity.Cart;
-import service.DummyOrderService;
+import com.hexaware.ecommerce.entity.Product;
+import com.hexaware.ecommerce.entity.Cart;
+import com.hexaware.ecommerce.entity.Order;
+import java.util.Date;
 
-public class EcommerceSystemTest {
+public class EcommerceAppTest {
 
-    DummyOrderService orderService = new DummyOrderService();
-    
-    // Test case 1: Test that a Product is created successfully.
+    // Test for Product created successfully
     @Test
     void testProductCreatedSuccessfully() {
-        Product product = new Product(1, "Laptop", 60000.0, "High performance laptop", 10);
-        assertNotNull(product, "Product should not be null");
-        assertEquals("Laptop", product.getName(), "Product name should be 'Laptop'");
-        assertEquals(60000.0, product.getPrice(), "Product price should be 60000.0");
-        assertEquals("High performance laptop", product.getDescription(), "Product description mismatch");
-        assertEquals(10, product.getStockQuantity(), "Product stock quantity should be 10");
+        Product product = new Product(101, "Phone", 699.99, "Smartphone with 5G", 20);
+        assertNotNull(product);
+        assertEquals(101, product.getProductId());
+        assertEquals("Phone", product.getName());
+        assertEquals(699.99, product.getPrice());
+        assertEquals("Smartphone with 5G", product.getDescription());
+        assertEquals(20, product.getStockQuantity());
     }
-    
-    // Test case 2: Test that a product is added to the cart successfully.
-    // For simplicity, we assume that creating a Cart object correctly represents adding the product.
+
+    // Test for Product added to Cart
     @Test
     void testProductAddedToCartSuccessfully() {
-        // Create a Cart object with sample data:
-        // cartId = 201, customerId = 101, productId = 1, quantity = 2
-        Cart cart = new Cart(201, 101, 1, 2);
-        assertEquals(101, cart.getCustomerId(), "Customer ID should be 101");
-        assertEquals(1, cart.getProductId(), "Product ID should be 1");
-        assertEquals(2, cart.getQuantity(), "Quantity should be 2");
+        Product product = new Product(101, "Phone", 699.99, "Smartphone with 5G", 20);
+        Cart cart = new Cart(1, 1001, product.getProductId(), 1); // Adding 1 quantity of the product to the cart
+        int cartProductId = cart.getProductId();
+        int cartQuantity = cart.getQuantity();
+        assertEquals(101, cartProductId, "Product ID should be 101");
+        assertEquals(1, cartQuantity, "Cart should have 1 quantity of the product");
     }
-    
-    // Test case 3: Test that a product is ordered successfully.
+
+    // Test for Product ordered successfully
     @Test
     void testProductOrderedSuccessfully() {
-        Customer customer = new Customer(101, "John Doe", "john@example.com", "password123");
-        Product product = new Product(1, "Laptop", 60000.0, "High performance laptop", 10);
+       
+        Product product = new Product(101, "Phone", 699.99, "Smartphone with 5G", 20);
+        int customerId = 1001; 
+        double totalPrice = product.getPrice();  
+        String shippingAddress = "123 St, City, Country";  
         
-        boolean isOrderPlaced = orderService.placeOrder(customer, product);
-        assertTrue(isOrderPlaced, "Order should be placed successfully");
-    }
-    
-    // Test case 4: Test that an exception is thrown correctly when customer or product is not found.
-    @Test
-    void testExceptionThrownWhenCustomerOrProductNotFound() {
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            orderService.placeOrder(null, null);
-        });
+       
+        int orderId = 1; // Assuming the order ID is 1
+        Date orderDate = new Date(); // Current date for the order
+        Order order = new Order(orderId, customerId, orderDate, totalPrice, shippingAddress);
         
-        String expectedMessage = "Customer or Product not found in database";
-        assertTrue(exception.getMessage().contains(expectedMessage), 
-                   "Exception message should indicate missing customer or product");
+        
+        assertNotNull(order, "Order should not be null.");
+        assertEquals(orderId, order.getOrderId(), "Order ID should be 1");
+        assertEquals(customerId, order.getCustomerId(), "Customer ID should be 1001");
+        assertEquals(totalPrice, order.getTotalPrice(), "Total price should match the product price");
+        assertEquals(shippingAddress, order.getShippingAddress(), "Shipping address should match.");
     }
 }
+
 
